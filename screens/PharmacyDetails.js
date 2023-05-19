@@ -13,6 +13,7 @@ const screenHeight = Math.round(Dimensions.get('window').height);
 const PharmacyDetails = ({ route, navigation }) => {
     const { themeMode } = useContext(RootContext);
     const pharmacy = route.params;
+    console.log(pharmacy.image);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -30,7 +31,7 @@ const PharmacyDetails = ({ route, navigation }) => {
 
     return (
         <Box bg={themeMode.current.bgColor} flex={1}>
-            <ImageBackground source={{ uri: 'https://raw.githubusercontent.com/Ay0ubN0uri/LocationPharmacies/master/client/public/images/img14.jpg?token=GHSAT0AAAAAACBDA3WUREYJINNLNJKKPLVUZDGGGVA' }}
+            <ImageBackground source={{ uri: pharmacy.image }}
                 style={{
                     width: screenWidth,
                     height: screenHeight * 0.40,

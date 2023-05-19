@@ -44,7 +44,6 @@ const ListViewTab = ({ pharmacies }) => {
 }
 
 const MapViewTab = ({ pharmacies }) => {
-    console.log(pharmacies);
     return (
         <Center flex={1}>
             <MapView
@@ -62,7 +61,7 @@ const MapViewTab = ({ pharmacies }) => {
                     <Marker
                         key={index}
                         coordinate={{ latitude: pharmacy.latitude, longitude: pharmacy.longitude }}
-                        title={pharmacy.name}
+                        title={`${pharmacy.name} (${pharmacy.garde.toUpperCase()})`}
                         description={pharmacy.address}
                     />
                 ))}
