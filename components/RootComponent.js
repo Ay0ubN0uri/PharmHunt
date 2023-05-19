@@ -1,6 +1,7 @@
 import { DefaultTheme, NavigationContainer, useNavigationState } from "@react-navigation/native";
 import { Box, Center, Text, useColorMode, useColorModeValue, useToken } from "native-base";
 import RootNavigator from "../navigators/RootNavigator";
+import SecondaryNavigator from '../navigators/SecondaryNavigator';
 import { StatusBar } from "expo-status-bar";
 import Floaters from "./core/Floaters";
 import { useEffect } from "react";

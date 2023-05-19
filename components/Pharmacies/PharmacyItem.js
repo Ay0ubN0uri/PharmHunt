@@ -4,16 +4,40 @@ import { Dimensions, ImageBackground, StyleSheet } from "react-native";
 import TouchableScale from "react-native-touchable-scale";
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
+import geolib from 'geolib';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenHeight = Math.round(Dimensions.get('window').height);
 
-const PharmacyItem = ({ id, name, address, garde, image, latitude, longitude, zone }) => {
-    const navigation = useNavigation();
+const calculateDistance = (currentLocation, pharmacyLatitude, pharmacyLongitude) => {
+    // console.log("currentLocation.latitude", currentLocation.latitude);
+    // console.log("pharmacyLocation.latitude", latitude);
+    // console.log("currentLocation.longitude", currentLocation.longitude);
+    // console.log("pharmacyLocation.longitude", longitude);
 
+    const R = 6371; // Earth's radius in km
+    const lat1 = currentLocation.latitude;
+    const lon1 = currentLocation.longitude;
+    const lat2 = pharmacyLatitude;
+    const lon2 = pharmacyLongitude;
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c;
+    // Distance will be in km
+    // console.log('Distance:', distance);
+    return distance.toFixed(2);
+};
+
+const PharmacyItem = ({ id, name, address, garde, image, latitude, longitude, zone, currentLocation }) => {
+    const navigation = useNavigation();
+    const distance = calculateDistance(currentLocation, latitude, longitude);
     const handlePress = () => {
         navigation.navigate('Pharmacy Details',{
-            id,name,address,garde,image,latitude,longitude,zone
+            id,name,address,garde,image,latitude,longitude,zone, distance, currentLocation
         });
         // console.log(navigation)
     }
@@ -31,7 +55,7 @@ const PharmacyItem = ({ id, name, address, garde, image, latitude, longitude, zo
                     <HStack marginX={3}>
                         {/* <FontAwesome5 name="walking" size={screenWidth * 0.05} color="white" /> */}
                         <FontAwesome5 name="car" size={screenWidth * 0.05} color="white" />
-                        <Text numberOfLines={1} fontSize={14} marginX={3} opacity={0.8} color={'white'} >Distance : 45 Km</Text>
+                        <Text numberOfLines={1} fontSize={14} marginX={3} opacity={0.8} color={'white'} >Distance : {distance} Km</Text>
                     </HStack>
                     <Center bg="lightBlue.500" _dark={{
                         bg: "darkBlue.400"

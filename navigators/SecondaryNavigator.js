@@ -8,6 +8,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { Octicons } from '@expo/vector-icons';
 import FavoritesPharmacies from "../screens/FavoritesPharmacies";
 import PharmaciesResults from "../screens/PharmaciesResults";
+import PharmacyNavigator from "./PharmacyNavigator";
 
 const Drawer = createDrawerNavigator();
 
@@ -45,10 +46,10 @@ const SecondaryNavigator = () => {
                 title: 'Favorites Pharmacies',
                 drawerIcon: ({ color, size }) => <Octicons name="feed-star" size={size} color={color} />
             }} />
-            <Drawer.Screen name="Pharmacies Results" component={PharmaciesResults} options={{
+            {/* <Drawer.Screen name="Pharmacies Results" component={PharmaciesResults} options={{
                 title: 'Pharmacies Results',
                 drawerIcon: ({ color, size }) => <Octicons name="feed-star" size={size} color={color} />
-            }} />
+            }} /> */}
         </Drawer.Navigator>
     )
 }

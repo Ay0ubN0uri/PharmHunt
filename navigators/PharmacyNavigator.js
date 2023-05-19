@@ -1,16 +1,12 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import SecondaryNavigator from "./SecondaryNavigator";
-// import ManageExpense from "../screens/ManageExpense";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { RootContext } from "../store/context/root-context";
-import { useNavigation, useNavigationState } from "@react-navigation/native";
-import PharmacyDetails from "../screens/PharmacyDetails";
+import FindPharmacies from "../screens/FindPharmacies";
 import PharmaciesResults from "../screens/PharmaciesResults";
 
-// const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
 
-const RootNavigator = () => {
+const PharmacyNavigator = () => {
     const { themeMode } = useContext(RootContext);
 
     return (
@@ -27,17 +23,14 @@ const RootNavigator = () => {
             presentation: 'modal',
             gestureEnabled: false,
         }}>
-            <Stack.Screen name="ExpensesOverview" component={SecondaryNavigator} options={{
+            <Stack.Screen name="Find Pharmacies2" component={FindPharmacies} options={{
                 headerShown: false
             }} />
-            <Stack.Screen name="Pharmacy Details" component={PharmacyDetails} options={{
-                title: 'Pharmacy Details',
-            }} />
-            <Stack.Screen name="Pharmacies Results" component={PharmaciesResults} options={{
-                title: 'Pharmacies Results',
+            <Stack.Screen name="Pharmacy Results" component={PharmaciesResults} options={{
+                title: 'Pharmacy Results',
             }} />
         </Stack.Navigator>
     );
 }
 
-export default RootNavigator;
+export default PharmacyNavigator;
