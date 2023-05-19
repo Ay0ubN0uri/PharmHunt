@@ -57,6 +57,19 @@ const PharmacyItem = ({ id, name, address, garde, image, latitude, longitude, zo
                     }} position="absolute" bottom="0" right='0' px="3" py="1.5" borderTopLeftRadius={5}>
                         {garde.toUpperCase()}
                     </Center>
+                    <Center
+                        bg="lightBlue.500"
+                        _dark={{
+                            bg: "darkBlue.400"
+                        }}
+                        _text={{
+                            color: "warmGray.50",
+                            fontWeight: "700",
+                            fontSize: "xs"
+                        }}
+                        position="absolute" top="0" left='0' px="3" py="1.5" borderBottomRightRadius={5}>
+                        {zone.name.toUpperCase()}
+                    </Center>
                 </LinearGradient>
             </ImageBackground>
         </TouchableScale>
