@@ -74,7 +74,7 @@ const PharmacyDetails = ({ route, navigation }) => {
                         color: "warmGray.50",
                         fontWeight: "700",
                         fontSize: "xs"
-                    }} position="absolute" bottom="0" right='0' px="3" py="1.5" borderBottomLeftRadius={5}>
+                    }} position="absolute" top="0" right='0' px="3" py="1.5" borderBottomLeftRadius={5}>
                         {garde.toUpperCase()}
                     </Center>
                     <Center bg="lightBlue.500" _dark={{
@@ -128,7 +128,7 @@ const PharmacyDetails = ({ route, navigation }) => {
                     />
                 </MapView>
             </Center>
-            <IconButton colorScheme="darkBlue" position={'absolute'} bottom={5} left={5} borderRadius={'full'} size={"lg"} variant={'solid'} _icon={{
+            <IconButton colorScheme="darkBlue" position={'absolute'} bottom={4} left={5} borderRadius={'full'} size={"lg"} variant={'solid'} _icon={{
                 as: FontAwesome5,
                 name: "directions",
                 _dark: { color: 'darkBlue.600' },
