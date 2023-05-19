@@ -4,16 +4,10 @@ import { Dimensions, ImageBackground, StyleSheet } from "react-native";
 import TouchableScale from "react-native-touchable-scale";
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
-import geolib from 'geolib';
+import {calculateDistance} from '../../utils/helper';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenHeight = Math.round(Dimensions.get('window').height);
-
-const calculateDistance = (currentLocation, pharmacyLatitude, pharmacyLongitude) => {
-    // console.log("currentLocation.latitude", currentLocation.latitude);
-    // console.log("pharmacyLocation.latitude", latitude);
-    // console.log("currentLocation.longitude", currentLocation.longitude);
-    // console.log("pharmacyLocation.longitude", longitude);
 
 const images = [
     'https://images.unsplash.com/photo-1543243803-2c586f6068b6?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=1080&ixid=MnwxfDB8MXxyYW5kb218MHx8cGhhcm1hY3l8fHx8fHwxNjg0NTA5Njk2&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1920',
@@ -31,39 +25,21 @@ const images = [
     'https://i.pinimg.com/originals/fb/03/20/fb0320c79932c44d5e88a05a933a00b1.jpg'
 ]
 
-const PharmacyItem = ({ id, name, address, garde, image, latitude, longitude, zone }) => {
-    const navigation = useNavigation();
-    const R = 6371; // Earth's radius in km
-    const lat1 = currentLocation.latitude;
-    const lon1 = currentLocation.longitude;
-    const lat2 = pharmacyLatitude;
-    const lon2 = pharmacyLongitude;
-    const dLat = ((lat2 - lat1) * Math.PI) / 180;
-    const dLon = ((lon2 - lon1) * Math.PI) / 180;
-    const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c;
-    // Distance will be in km
-    // console.log('Distance:', distance);
-    return distance.toFixed(2);
-};
 
 const PharmacyItem = ({ id, name, address, garde, image, latitude, longitude, zone, currentLocation }) => {
     const navigation = useNavigation();
     const distance = calculateDistance(currentLocation, latitude, longitude);
     const handlePress = () => {
         navigation.navigate('Pharmacy Details', {
-            id, 
-            name, 
-            address, 
-            garde, 
-            image: images[parseInt(image.split('.')[0].slice(3)) % images.length], 
-            latitude, 
-            longitude, 
-            zone, 
-            distance, 
+            id,
+            name,
+            address,
+            garde,
+            image: images[parseInt(image.split('.')[0].slice(3)) % images.length],
+            latitude,
+            longitude,
+            zone,
+            distance,
             currentLocation,
         });
     }

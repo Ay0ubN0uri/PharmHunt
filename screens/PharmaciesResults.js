@@ -14,7 +14,6 @@ import MapView, { Marker } from "react-native-maps";
 
 
 const ListViewTab = ({ currentLocation, pharmacies }) => {
-    console.log("currentLocation from listViewTab: ", currentLocation);
     const renderPharmacyItem = (itemData) => {
         const pharmacy = itemData.item;
         const pharmacyProps = {

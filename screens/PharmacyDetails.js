@@ -9,6 +9,8 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { LinearGradient } from "expo-linear-gradient";
 import { AntDesign } from '@expo/vector-icons';
 import MapView, { Marker, Polyline, Callout } from "react-native-maps";
+import * as Linking from 'expo-linking';
+import { generateGoogleMapsURL } from '../utils/helper';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenHeight = Math.round(Dimensions.get('window').height);
@@ -35,9 +37,16 @@ const PharmacyDetails = ({ route, navigation }) => {
         })
     }, [navigation]);
 
+
+    const handleOpenGoogleMaps = () => {
+        const url = generateGoogleMapsURL(currentLocation, {latitude, longitude});
+        console.log("url:", url);
+        Linking.openURL(url);
+    };
+
     return (
         <Box bg={themeMode.current.bgColor} flex={1}>
-            <ImageBackground source={{ uri: pharmacy.image }}
+            <ImageBackground source={{ uri: image }}
                 style={{
                     width: screenWidth,
                     height: screenHeight * 0.40,
@@ -75,13 +84,13 @@ const PharmacyDetails = ({ route, navigation }) => {
                         fontWeight: "700",
                         fontSize: "xs"
                     }} position="absolute" top="0" left='0' px="3" py="1.5" borderBottomRightRadius={5}>
-                        {pharmacy.zone.name.toUpperCase()}
+                        {zone.name.toUpperCase()}
                     </Center>
                 </LinearGradient>
 
             </ImageBackground>
 
-            <Center flex={1} m={3} borderRadius={"lg"}
+            <Center flex={1}
                 _dark={{
                     borderColor: 'lightBlue.300'
                 }}
@@ -91,8 +100,8 @@ const PharmacyDetails = ({ route, navigation }) => {
                 borderWidth={"4"}>
                 <MapView
                     region={{
-                        latitude: pharmacy.latitude,
-                        longitude: pharmacy.longitude,
+                        latitude: latitude,
+                        longitude: longitude,
                         latitudeDelta: 0.0922,
                         longitudeDelta: 0.0421,
                     }}
@@ -102,10 +111,20 @@ const PharmacyDetails = ({ route, navigation }) => {
                     }}>
 
                     <Marker
-                        coordinate={{ latitude: pharmacy.latitude, longitude: pharmacy.longitude }}
-                        title={`${pharmacy.name} (${pharmacy.garde.toUpperCase()})`}
-                        description={pharmacy.address}
-
+                        coordinate={currentLocation}
+                        title="Your Current Location"
+                        pinColor="blue"
+                    />
+                    <Marker
+                        coordinate={{latitude, longitude}}
+                        title={`${name} (${garde.toUpperCase()})`}
+                        description={address}
+                        pinColor="red"
+                        />
+                    <Polyline
+                        coordinates={[currentLocation, {latitude, longitude}]}
+                        strokeWidth={2}
+                        strokeColor="green"
                     />
                 </MapView>
             </Center>
@@ -133,7 +152,7 @@ const PharmacyDetails = ({ route, navigation }) => {
                         bg: 'lightBlue.600',
                     },
                 }}
-                onPress={() => { console.log("hello from direcion") }}
+                onPress={handleOpenGoogleMaps}
             />
         </Box>
     )

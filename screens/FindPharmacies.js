@@ -36,7 +36,6 @@ const FindPharmacies = ({ navigation }) => {
         if (!zones) {
             setError("Something Want Wrong");
         }
-        // console.log(zones);
 
         setCurrentLocation(location);
         setCities(cities);
@@ -75,16 +74,6 @@ const FindPharmacies = ({ navigation }) => {
     }
 
     const handleSearch = async () => {
-        // console.log('====================================');
-        // console.log(nightPharmacies.concat(dayPharmacies));
-        // console.log('====================================');
-        // await getLocation();
-        // console.log("currentLocation: ", currentLocation)
-        // currentLocation && navigation.navigate('Pharmacies Results', {
-        //     city, zone, night, day, currentLocation
-        //     // pharmacies: nightPharmacies.concat(dayPharmacies)
-        // });
-
         if (currentLocation) {
           navigation.navigate('Pharmacies Results', {
             city,
