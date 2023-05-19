@@ -15,6 +15,24 @@ const calculateDistance = (currentLocation, pharmacyLatitude, pharmacyLongitude)
     // console.log("currentLocation.longitude", currentLocation.longitude);
     // console.log("pharmacyLocation.longitude", longitude);
 
+const images = [
+    'https://images.unsplash.com/photo-1543243803-2c586f6068b6?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=1080&ixid=MnwxfDB8MXxyYW5kb218MHx8cGhhcm1hY3l8fHx8fHwxNjg0NTA5Njk2&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1920',
+    'https://images.unsplash.com/photo-1587351021355-a479a299d2f9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2344&q=80',
+    'https://images.unsplash.com/photo-1586773860418-d37222d8fce3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2346&q=80',
+    'https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2344&q=80',
+    'https://iowacapitaldispatch.com/wp-content/uploads/2022/07/drug2.jpg',
+    'https://i.pinimg.com/originals/d9/6d/c7/d96dc765ac5b76f2c46d7624ee8e7acc.jpg',
+    'http://www.cwpdesign.co.uk/wp-content/uploads/2015/07/ZW7B8811.jpg',
+    'https://www.be-smooth.com/wp-content/uploads/2014/02/french-pharmacy.jpg',
+    'https://s3-media0.fl.yelpcdn.com/bphoto/rBpRnIoF68Hkx0kAf673rA/o.jpg',
+    'https://s3-media0.fl.yelpcdn.com/bphoto/46pZ6_s8Wr_WnUc78qiQjg/o.jpg',
+    'https://live.staticflickr.com/5075/5850383833_e5c4d16d14_k.jpg',
+    'https://www.coop-apm.com/pharmacie-jeanjaures/images/pharmacie1.jpg',
+    'https://i.pinimg.com/originals/fb/03/20/fb0320c79932c44d5e88a05a933a00b1.jpg'
+]
+
+const PharmacyItem = ({ id, name, address, garde, image, latitude, longitude, zone }) => {
+    const navigation = useNavigation();
     const R = 6371; // Earth's radius in km
     const lat1 = currentLocation.latitude;
     const lon1 = currentLocation.longitude;
@@ -36,17 +54,25 @@ const PharmacyItem = ({ id, name, address, garde, image, latitude, longitude, zo
     const navigation = useNavigation();
     const distance = calculateDistance(currentLocation, latitude, longitude);
     const handlePress = () => {
-        navigation.navigate('Pharmacy Details',{
-            id,name,address,garde,image,latitude,longitude,zone, distance, currentLocation
+        navigation.navigate('Pharmacy Details', {
+            id, 
+            name, 
+            address, 
+            garde, 
+            image: images[parseInt(image.split('.')[0].slice(3)) % images.length], 
+            latitude, 
+            longitude, 
+            zone, 
+            distance, 
+            currentLocation,
         });
-        // console.log(navigation)
     }
 
     return (
         <TouchableScale key={id} activeOpacity={1} onPress={handlePress} activeScale={0.98} tension={100} friction={10}>
             <ImageBackground
                 style={styles.pharmacyCard}
-                source={{ uri: 'https://raw.githubusercontent.com/Ay0ubN0uri/LocationPharmacies/master/client/public/images/img14.jpg?token=GHSAT0AAAAAACBDA3WUREYJINNLNJKKPLVUZDGGGVA' }}
+                source={{ uri: images[parseInt(image.split('.')[0].slice(3)) % images.length] }}
                 imageStyle={{ borderRadius: 8 }}>
                 <LinearGradient colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.88)']}
                     style={styles.pharmacyGradient}>
@@ -65,6 +91,19 @@ const PharmacyItem = ({ id, name, address, garde, image, latitude, longitude, zo
                         fontSize: "xs"
                     }} position="absolute" bottom="0" right='0' px="3" py="1.5" borderTopLeftRadius={5}>
                         {garde.toUpperCase()}
+                    </Center>
+                    <Center
+                        bg="lightBlue.500"
+                        _dark={{
+                            bg: "darkBlue.400"
+                        }}
+                        _text={{
+                            color: "warmGray.50",
+                            fontWeight: "700",
+                            fontSize: "xs"
+                        }}
+                        position="absolute" top="0" left='0' px="3" py="1.5" borderBottomRightRadius={5}>
+                        {zone.name.toUpperCase()}
                     </Center>
                 </LinearGradient>
             </ImageBackground>

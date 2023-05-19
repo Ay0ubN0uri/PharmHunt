@@ -1,5 +1,6 @@
 import { Box, Center, HStack, IconButton, Text, Button } from "native-base";
 import { View } from 'react-native';
+
 import { RootContext } from "../store/context/root-context";
 import { useContext, useEffect, useLayoutEffect } from "react";
 import { Dimensions } from "react-native";
@@ -16,23 +17,27 @@ const PharmacyDetails = ({ route, navigation }) => {
     const { themeMode } = useContext(RootContext);
     const {id,name,address,garde,image,latitude,longitude,zone, distance, currentLocation} = route.params;
 
+    const favoritePharmacyHandler = ()=>{
+        //
+    }
+
     useLayoutEffect(() => {
         navigation.setOptions({
-            headerRight: ({ tintColor }) => <IconButton icon={<AntDesign name={true ? 'star' : 'staro'} size={24} color={tintColor} />}
+            headerRight: ({ tintColor }) => <IconButton icon={<AntDesign name={true ? 'staro' : 'star'} size={24} color={tintColor} />}
                 borderRadius="full"
                 _hover={{
                     bg: "lightBlue.200",
                 }} _pressed={{
                     bg: "lightBlue.200",
                 }}
-            // onPress={favoriteMealHandler}
+            onPress={favoritePharmacyHandler}
             />
         })
     }, [navigation]);
 
     return (
         <Box bg={themeMode.current.bgColor} flex={1}>
-            <ImageBackground source={{ uri: 'https://raw.githubusercontent.com/Ay0ubN0uri/LocationPharmacies/master/client/public/images/img14.jpg?token=GHSAT0AAAAAACBDA3WUREYJINNLNJKKPLVUZDGGGVA' }}
+            <ImageBackground source={{ uri: pharmacy.image }}
                 style={{
                     width: screenWidth,
                     height: screenHeight * 0.40,
@@ -63,15 +68,31 @@ const PharmacyDetails = ({ route, navigation }) => {
                     }} position="absolute" bottom="0" right='0' px="3" py="1.5" borderBottomLeftRadius={5}>
                         {garde.toUpperCase()}
                     </Center>
+                    <Center bg="lightBlue.500" _dark={{
+                        bg: "darkBlue.400"
+                    }} _text={{
+                        color: "warmGray.50",
+                        fontWeight: "700",
+                        fontSize: "xs"
+                    }} position="absolute" top="0" left='0' px="3" py="1.5" borderBottomRightRadius={5}>
+                        {pharmacy.zone.name.toUpperCase()}
+                    </Center>
                 </LinearGradient>
 
             </ImageBackground>
 
-            <Center flex={1}>
+            <Center flex={1} m={3} borderRadius={"lg"}
+                _dark={{
+                    borderColor: 'lightBlue.300'
+                }}
+                _light={{
+                    borderColor: 'darkBlue.300'
+                }}
+                borderWidth={"4"}>
                 <MapView
                     region={{
-                        latitude: currentLocation.latitude,
-                        longitude: currentLocation.longitude,
+                        latitude: pharmacy.latitude,
+                        longitude: pharmacy.longitude,
                         latitudeDelta: 0.0922,
                         longitudeDelta: 0.0421,
                     }}
@@ -79,15 +100,41 @@ const PharmacyDetails = ({ route, navigation }) => {
                         width: '100%',
                         height: '100%',
                     }}>
-                    <Marker coordinate={currentLocation} title="Your Current Location" pinColor="blue" />
-                    <Marker coordinate={{latitude, longitude}} title={address} pinColor="red" />
-                    <Polyline
-                        coordinates={[currentLocation, {latitude, longitude}]}
-                        strokeWidth={2}
-                        strokeColor="green"
+
+                    <Marker
+                        coordinate={{ latitude: pharmacy.latitude, longitude: pharmacy.longitude }}
+                        title={`${pharmacy.name} (${pharmacy.garde.toUpperCase()})`}
+                        description={pharmacy.address}
+
                     />
                 </MapView>
             </Center>
+            <IconButton colorScheme="darkBlue" position={'absolute'} bottom={5} left={5} borderRadius={'full'} size={"lg"} variant={'solid'} _icon={{
+                as: FontAwesome5,
+                name: "directions",
+                _dark: { color: 'darkBlue.600' },
+                _light: { color: 'lightBlue.50' },
+            }}
+                _dark={{
+                    bg: 'lightBlue.50',
+                    _hover: {
+                        bg: 'darkBlue.200',
+                    },
+                    _pressed: {
+                        bg: 'darkBlue.200',
+                    },
+                }}
+                _light={{
+                    bg: 'darkBlue.400',
+                    _hover: {
+                        bg: 'lightBlue.600',
+                    },
+                    _pressed: {
+                        bg: 'lightBlue.600',
+                    },
+                }}
+                onPress={() => { console.log("hello from direcion") }}
+            />
         </Box>
     )
 }
