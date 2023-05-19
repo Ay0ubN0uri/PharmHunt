@@ -75,8 +75,8 @@ const initialLayout = {
 
 
 
-const PharmaciesResults = ({ route }) => {
-    const { city, zone, night, day, currentLocation } = route.params;
+const PharmaciesResults = ({ route,navigation }) => {
+    const { city, zone, night, day, currentLocation,resetForm } = route.params;
     const { themeMode } = useContext(RootContext);
     const [pharmacies, setPharmacies] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -105,8 +105,10 @@ const PharmaciesResults = ({ route }) => {
     }
 
     useEffect(() => {
-        console.log("hello")
         init();
+        navigation.addListener('beforeRemove', (e) => {
+            resetForm();
+        });
     }, [])
 
 
@@ -159,12 +161,12 @@ const PharmaciesResults = ({ route }) => {
                 }} /> :
                     isLoading ? <LoadingSpinner /> :
                         pharmacies.length == 0 ? <NothingFound message={"Nothing Found"} /> :
-                        <TabView navigationState={{
-                            index,
-                            routes
-                        }} renderScene={renderScene} renderTabBar={renderTabBar} onIndexChange={setIndex} initialLayout={initialLayout} style={{
-                            marginTop: StatusBar.currentHeight
-                        }} />
+                            <TabView navigationState={{
+                                index,
+                                routes
+                            }} renderScene={renderScene} renderTabBar={renderTabBar} onIndexChange={setIndex} initialLayout={initialLayout} style={{
+                                marginTop: StatusBar.currentHeight
+                            }} />
             }
         </Box>
     )

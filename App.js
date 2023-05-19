@@ -6,6 +6,11 @@ import * as SplashScreen from 'expo-splash-screen';
 import RootContextProvider from "./store/context/root-context";
 import Root from "./components/RootComponent";
 import Floaters from "./components/core/Floaters";
+import { LogBox } from "react-native";
+
+LogBox.ignoreLogs([
+  'Non-serializable values were found in the navigation state',
+]);
 
 SplashScreen.preventAutoHideAsync();
 
