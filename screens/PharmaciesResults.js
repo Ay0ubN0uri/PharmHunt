@@ -158,7 +158,7 @@ const PharmaciesResults = ({ route }) => {
                     init();
                 }} /> :
                     isLoading ? <LoadingSpinner /> :
-                        // pharmacies.length == 0 ? <NothingFound message={"Nothing Found"} /> :
+                        pharmacies.length == 0 ? <NothingFound message={"Nothing Found"} /> :
                         <TabView navigationState={{
                             index,
                             routes
