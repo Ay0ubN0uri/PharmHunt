@@ -1,17 +1,32 @@
-import { Box, Center, HStack, Text } from "native-base";
+import { Box, Center, HStack, IconButton, Text } from "native-base";
 import { RootContext } from "../store/context/root-context";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useLayoutEffect } from "react";
 import { Dimensions } from "react-native";
 import { ImageBackground } from "react-native";
 import { FontAwesome5 } from '@expo/vector-icons';
 import { LinearGradient } from "expo-linear-gradient";
+import { AntDesign } from '@expo/vector-icons';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenHeight = Math.round(Dimensions.get('window').height);
 
-const PharmacyDetails = ({ route }) => {
+const PharmacyDetails = ({ route, navigation }) => {
     const { themeMode } = useContext(RootContext);
     const pharmacy = route.params;
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerRight: ({ tintColor }) => <IconButton icon={<AntDesign name={true ? 'star' : 'staro'} size={24} color={tintColor} />}
+                borderRadius="full"
+                _hover={{
+                    bg: "lightBlue.200",
+                }} _pressed={{
+                    bg: "lightBlue.200",
+                }}
+            // onPress={favoriteMealHandler}
+            />
+        })
+    }, [navigation]);
 
     return (
         <Box bg={themeMode.current.bgColor} flex={1}>

@@ -3,7 +3,7 @@ import { RootContext } from "../../store/context/root-context";
 import { useContext } from "react";
 import { FontAwesome } from '@expo/vector-icons';
 
-const PharmacySummary = ({ expensesPeriod }) => {
+const PharmacySummary = ({ pharmaciesCount }) => {
     const { themeMode } = useContext(RootContext);
     const { colorMode, toggleColorMode } = useColorMode();
     return (
@@ -11,7 +11,7 @@ const PharmacySummary = ({ expensesPeriod }) => {
             <Heading fontWeight={'bold'} size="sm">Number of Pharmacies</Heading>
             <Heading fontWeight={'900'} size="lg" alignSelf={'center'} mt={1} alignItems="center">
                 <FontAwesome name="medkit" size={24} color={colorMode == 'dark' ? 'white' : 'black'}/>
-                {' '} 10
+                {' '} {pharmaciesCount}
             </Heading>
         </HStack>
     )
