@@ -1,7 +1,6 @@
 import { Box, Center, FlatList, Pressable, useColorModeValue } from "native-base";
 import { RootContext } from "../store/context/root-context";
 import { useContext, useEffect, useState } from "react";
-import { init } from "ws";
 import { fetchAllPharmacies, fetchPharmacies } from "../utils/http";
 import LoadingSpinner from "../components/core/LoadingSpinner";
 import PharmacyItem from "../components/Pharmacies/PharmacyItem";
@@ -11,11 +10,76 @@ import NothingFound from "../components/core/NothingFound";
 import { SceneMap, TabView } from "react-native-tab-view";
 import { Dimensions, StatusBar } from "react-native";
 import Animated from "react-native-reanimated";
+import MapView, { Marker } from "react-native-maps";
 
 
 
-const ListView = ({ route }) => {
+const ListViewTab = ({ pharmacies }) => {
+
+    const renderPharmacyItem = (itemData) => {
+        const pharmacy = itemData.item;
+        const pharmacyProps = {
+            id: pharmacy._id,
+            name: pharmacy.name,
+            address: pharmacy.address,
+            garde: pharmacy.garde,
+            image: pharmacy.images[0].url,
+            latitude: pharmacy.latitude,
+            longitude: pharmacy.longitude,
+            zone: pharmacy.zone,
+        }
+        return <PharmacyItem key={pharmacy._id} {...pharmacyProps} />
+    }
+    return (
+        <>
+            {
+                pharmacies.length == 0 ? <NothingFound message={"Nothing Found"} /> :
+                    <>
+                        <PharmacySummary pharmaciesCount={pharmacies.length} />
+                        <FlatList data={pharmacies} keyExtractor={item => item._id} renderItem={renderPharmacyItem} />
+                    </>
+            }
+        </>
+    )
+}
+
+const MapViewTab = ({ pharmacies }) => {
+    console.log(pharmacies);
+    return (
+        <Center flex={1}>
+            <MapView
+                region={{
+                    latitude: pharmacies[0].latitude,
+                    longitude: pharmacies[0].longitude,
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421,
+                }}
+                loadingEnabled="true" mapType="satellite" style={{
+                    width: '100%',
+                    height: '100%',
+                }}>
+                {pharmacies.map((pharmacy, index) => (
+                    <Marker
+                        key={index}
+                        coordinate={{ latitude: pharmacy.latitude, longitude: pharmacy.longitude }}
+                        title={pharmacy.name}
+                        description={pharmacy.address}
+                    />
+                ))}
+            </MapView>
+        </Center>
+    )
+}
+
+const initialLayout = {
+    width: Dimensions.get('window').width
+};
+
+
+
+const PharmaciesResults = ({ route }) => {
     const { city, zone, night, day } = route.params;
+    const { themeMode } = useContext(RootContext);
     const [pharmacies, setPharmacies] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
@@ -42,60 +106,9 @@ const ListView = ({ route }) => {
     }
 
     useEffect(() => {
+        console.log("hello")
         init();
-    }, [pharmacies])
-    const renderPharmacyItem = (itemData) => {
-        const pharmacy = itemData.item;
-        const pharmacyProps = {
-            id: pharmacy._id,
-            name: pharmacy.name,
-            address: pharmacy.address,
-            garde: pharmacy.garde,
-            image: pharmacy.images[0].url,
-            latitude: pharmacy.latitude,
-            longitude: pharmacy.longitude,
-            zone: pharmacy.zone,
-        }
-        return <PharmacyItem key={pharmacy._id} {...pharmacyProps} />
-    }
-    return (
-        <>
-            {
-                error ? <ErrorOverlay message={error} onPress={() => {
-                    setError(null);
-                    setIsLoading(true);
-                    init();
-                }} /> :
-                    isLoading ? <LoadingSpinner /> :
-                        pharmacies.length == 0 ? <NothingFound message={"Nothing Found"} /> :
-                            <>
-                                <PharmacySummary pharmaciesCount={pharmacies.length} />
-                                <FlatList data={pharmacies} keyExtractor={item => item._id} renderItem={renderPharmacyItem} />
-                            </>
-            }
-        </>
-    )
-}
-
-const MapView = () => {
-    return (
-        <Center flex={1} my="4">
-            This is map view
-        </Center>
-    )
-}
-
-const initialLayout = {
-    width: Dimensions.get('window').width
-};
-
-
-
-const PharmaciesResults = ({ route }) => {
-    const { themeMode } = useContext(RootContext);
-
-
-
+    }, [])
 
     const [index, setIndex] = useState(0);
     const [routes, setRoutes] = useState([{
@@ -108,8 +121,8 @@ const PharmaciesResults = ({ route }) => {
     ])
 
     const renderScene = SceneMap({
-        listView: () => <ListView route={route} />,
-        mapView: MapView,
+        listView: () => <ListViewTab pharmacies={pharmacies} />,
+        mapView: () => <MapViewTab pharmacies={pharmacies} />,
     });
 
     const renderTabBar = props => {
@@ -122,7 +135,7 @@ const PharmaciesResults = ({ route }) => {
                 });
                 const color = index === i ? useColorModeValue('#000', '#e5e5e5') : useColorModeValue('#1f2937', '#a1a1aa');
                 const borderColor = index === i ? 'cyan.500' : useColorModeValue('coolGray.200', 'gray.400');
-                return <Box borderBottomWidth="3" borderColor={borderColor} flex={1} alignItems="center" p="3" cursor="pointer">
+                return <Box key={i} borderBottomWidth="3" borderColor={borderColor} flex={1} alignItems="center" p="3" cursor="pointer">
                     <Pressable onPress={() => {
                         console.log(i);
                         setIndex(i);
@@ -138,16 +151,21 @@ const PharmaciesResults = ({ route }) => {
 
     return (
         <Box bg={themeMode.current.bgColor} flex={1}>
-            <TabView navigationState={{
-                index,
-                routes
-            }} renderScene={renderScene} renderTabBar={renderTabBar} onIndexChange={setIndex} initialLayout={initialLayout} style={{
-                marginTop: StatusBar.currentHeight
-            }} />
-
-
-
-
+            {
+                error ? <ErrorOverlay message={error} onPress={() => {
+                    setError(null);
+                    setIsLoading(true);
+                    init();
+                }} /> :
+                    isLoading ? <LoadingSpinner /> :
+                        // pharmacies.length == 0 ? <NothingFound message={"Nothing Found"} /> :
+                        <TabView navigationState={{
+                            index,
+                            routes
+                        }} renderScene={renderScene} renderTabBar={renderTabBar} onIndexChange={setIndex} initialLayout={initialLayout} style={{
+                            marginTop: StatusBar.currentHeight
+                        }} />
+            }
         </Box>
     )
 }
