@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "expense-tracker",
-    "slug": "expense-tracker",
+    "name": "Pharm Hunter",
+    "slug": "pharm-hunt",
+    "description": "App for finding nearby pharmacies",
     "version": "1.0.0",
     "orientation": "default",
     "icon": "./assets/icon.png",
