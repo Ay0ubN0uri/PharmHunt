@@ -8,9 +8,11 @@ import LoadingSpinner from "../components/core/LoadingSpinner";
 import ErrorOverlay from "../components/core/ErrorOverlay";
 
 import * as Location from 'expo-location';
+import { FavoritesContext } from "../store/context/favorites-context";
 
 const FindPharmacies = ({ navigation }) => {
     const { themeMode } = useContext(RootContext);
+    const favoritePharmaciesCtx = useContext(FavoritesContext);
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [city, setCity] = useState(null);
@@ -38,6 +40,7 @@ const FindPharmacies = ({ navigation }) => {
         }
 
         setCurrentLocation(location);
+        favoritePharmaciesCtx.setCurrentLocation(location);
         setCities(cities);
         setAllZones(zones);
         setIsLoading(false);

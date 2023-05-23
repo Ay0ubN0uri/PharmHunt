@@ -4,7 +4,7 @@ import { Dimensions, ImageBackground, StyleSheet } from "react-native";
 import TouchableScale from "react-native-touchable-scale";
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
-import {calculateDistance} from '../../utils/helper';
+import { calculateDistance } from '../../utils/helper';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenHeight = Math.round(Dimensions.get('window').height);
@@ -35,7 +35,7 @@ const PharmacyItem = ({ id, name, address, garde, image, latitude, longitude, zo
             name,
             address,
             garde,
-            image: images[parseInt(image.split('.')[0].slice(3)) % images.length],
+            image: image,
             latitude,
             longitude,
             zone,
@@ -48,7 +48,7 @@ const PharmacyItem = ({ id, name, address, garde, image, latitude, longitude, zo
         <TouchableScale key={id} activeOpacity={1} onPress={handlePress} activeScale={0.98} tension={100} friction={10}>
             <ImageBackground
                 style={styles.pharmacyCard}
-                source={{ uri: images[parseInt(image.split('.')[0].slice(3)) % images.length] }}
+                source={{ uri: image }}
                 imageStyle={{ borderRadius: 8 }}>
                 <LinearGradient colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.88)']}
                     style={styles.pharmacyGradient}>
@@ -56,7 +56,7 @@ const PharmacyItem = ({ id, name, address, garde, image, latitude, longitude, zo
                     <Text numberOfLines={2} fontSize={15} color={'white'} fontWeight={'bold'} >{address}</Text>
                     <HStack marginX={3}>
                         {/* <FontAwesome5 name="walking" size={screenWidth * 0.05} color="white" /> */}
-                        <FontAwesome5 name="car" size={screenWidth * 0.05} color="white" />
+                        <FontAwesome5 name={distance < 3 ? 'walking' : 'car'} size={screenWidth * 0.05} color="white" />
                         <Text numberOfLines={1} fontSize={14} marginX={3} opacity={0.8} color={'white'} >Distance : {distance} Km</Text>
                     </HStack>
                     <Center bg="lightBlue.500" _dark={{

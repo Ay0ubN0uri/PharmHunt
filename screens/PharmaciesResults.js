@@ -11,72 +11,33 @@ import { SceneMap, TabView } from "react-native-tab-view";
 import { Dimensions, StatusBar } from "react-native";
 import Animated from "react-native-reanimated";
 import MapView, { Marker } from "react-native-maps";
+import ListViewTab from "../components/Pharmacies/ListViewTab";
+import MapViewTab from "../components/Pharmacies/MapViewTab";
 
-
-const ListViewTab = ({ currentLocation, pharmacies }) => {
-    const renderPharmacyItem = (itemData) => {
-        const pharmacy = itemData.item;
-        const pharmacyProps = {
-            id: pharmacy._id,
-            name: pharmacy.name,
-            address: pharmacy.address,
-            garde: pharmacy.garde,
-            image: pharmacy.images[0].url,
-            latitude: pharmacy.latitude,
-            longitude: pharmacy.longitude,
-            zone: pharmacy.zone,
-            currentLocation: currentLocation,
-        }
-        return <PharmacyItem key={pharmacy._id} {...pharmacyProps} />
-    }
-    return (
-        <>
-            {
-                pharmacies.length == 0 ? <NothingFound message={"Nothing Found"} /> :
-                    <>
-                        <PharmacySummary pharmaciesCount={pharmacies.length} />
-                        <FlatList data={pharmacies} keyExtractor={item => item._id} renderItem={renderPharmacyItem} />
-                    </>
-            }
-        </>
-    )
-}
-
-const MapViewTab = ({ pharmacies }) => {
-    return (
-        <Center flex={1}>
-            <MapView
-                region={{
-                    latitude: pharmacies[0].latitude,
-                    longitude: pharmacies[0].longitude,
-                    latitudeDelta: 0.0922,
-                    longitudeDelta: 0.0421,
-                }}
-                loadingEnabled="true" mapType="satellite" style={{
-                    width: '100%',
-                    height: '100%',
-                }}>
-                {pharmacies.map((pharmacy, index) => (
-                    <Marker
-                        key={index}
-                        coordinate={{ latitude: pharmacy.latitude, longitude: pharmacy.longitude }}
-                        title={`${pharmacy.name} (${pharmacy.garde.toUpperCase()})`}
-                        description={pharmacy.address}
-                    />
-                ))}
-            </MapView>
-        </Center>
-    )
-}
 
 const initialLayout = {
     width: Dimensions.get('window').width
 };
 
+const images = [
+    'https://images.unsplash.com/photo-1543243803-2c586f6068b6?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=1080&ixid=MnwxfDB8MXxyYW5kb218MHx8cGhhcm1hY3l8fHx8fHwxNjg0NTA5Njk2&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1920',
+    'https://images.unsplash.com/photo-1587351021355-a479a299d2f9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2344&q=80',
+    'https://images.unsplash.com/photo-1586773860418-d37222d8fce3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2346&q=80',
+    'https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2344&q=80',
+    'https://iowacapitaldispatch.com/wp-content/uploads/2022/07/drug2.jpg',
+    'https://i.pinimg.com/originals/d9/6d/c7/d96dc765ac5b76f2c46d7624ee8e7acc.jpg',
+    'http://www.cwpdesign.co.uk/wp-content/uploads/2015/07/ZW7B8811.jpg',
+    'https://www.be-smooth.com/wp-content/uploads/2014/02/french-pharmacy.jpg',
+    'https://s3-media0.fl.yelpcdn.com/bphoto/rBpRnIoF68Hkx0kAf673rA/o.jpg',
+    'https://s3-media0.fl.yelpcdn.com/bphoto/46pZ6_s8Wr_WnUc78qiQjg/o.jpg',
+    'https://live.staticflickr.com/5075/5850383833_e5c4d16d14_k.jpg',
+    'https://www.coop-apm.com/pharmacie-jeanjaures/images/pharmacie1.jpg',
+    'https://i.pinimg.com/originals/fb/03/20/fb0320c79932c44d5e88a05a933a00b1.jpg'
+]
 
 
-const PharmaciesResults = ({ route,navigation }) => {
-    const { city, zone, night, day, currentLocation,resetForm } = route.params;
+const PharmaciesResults = ({ route, navigation }) => {
+    const { city, zone, night, day, currentLocation, resetForm } = route.params;
     const { themeMode } = useContext(RootContext);
     const [pharmacies, setPharmacies] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -100,7 +61,13 @@ const PharmaciesResults = ({ route,navigation }) => {
                 return;
             }
         }
-        setPharmacies(nightPharmacies.concat(dayPharmacies));
+        setPharmacies((nightPharmacies.concat(dayPharmacies)).map(pharmacy => {
+            return {
+                ...pharmacy,
+                image: images[parseInt(pharmacy.images[0].url.split('.')[0].slice(3)) % images.length]
+            }
+        }))
+        // setPharmacies(nightPharmacies.concat(dayPharmacies));
         setIsLoading(false);
     }
 
