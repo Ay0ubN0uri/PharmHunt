@@ -8,9 +8,11 @@ import LoadingSpinner from "../components/core/LoadingSpinner";
 import ErrorOverlay from "../components/core/ErrorOverlay";
 
 import * as Location from 'expo-location';
+import { FavoritesContext } from "../store/context/favorites-context";
 
 const FindPharmacies = ({ navigation }) => {
     const { themeMode } = useContext(RootContext);
+    const favoritePharmaciesCtx = useContext(FavoritesContext);
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [city, setCity] = useState(null);
@@ -38,6 +40,7 @@ const FindPharmacies = ({ navigation }) => {
         }
 
         setCurrentLocation(location);
+        favoritePharmaciesCtx.setCurrentLocation(location);
         setCities(cities);
         setAllZones(zones);
         setIsLoading(false);
@@ -57,7 +60,7 @@ const FindPharmacies = ({ navigation }) => {
             const location = await Location.getCurrentPositionAsync({});
             console.log("location: ", location);
             const { latitude, longitude } = location.coords;
-            return {latitude, longitude }
+            return { latitude, longitude }
         }
         catch (error) {
             console.error('Error while getting location:', error);
@@ -73,15 +76,23 @@ const FindPharmacies = ({ navigation }) => {
         setZone(value);
     }
 
+    const resetForm = () => {
+        setZone('');
+        setCity('');
+        setNight(true);
+        setDay(true);
+    }
+
     const handleSearch = async () => {
         if (currentLocation) {
-          navigation.navigate('Pharmacies Results', {
-            city,
-            zone,
-            night,
-            day,
-            currentLocation
-          });
+            navigation.navigate('Pharmacies Results', {
+                city,
+                zone,
+                night,
+                day,
+                currentLocation,
+                resetForm
+            });
         }
     }
 
@@ -110,7 +121,7 @@ const FindPharmacies = ({ navigation }) => {
                                     }}>
                                         Choose city
                                     </FormControl.Label>
-                                    <Select onValueChange={handleCityChange} fontSize={15} _light={{
+                                    <Select selectedValue={city} onValueChange={handleCityChange} fontSize={15} _light={{
                                         color: 'lightBlue.500',
                                         placeholderTextColor: 'black',
                                         bgColor: themeMode.current.bgHeaderColor
@@ -143,7 +154,7 @@ const FindPharmacies = ({ navigation }) => {
                                     }}>
                                         Choose zone
                                     </FormControl.Label>
-                                    <Select onValueChange={handleZoneChange} fontSize={15} _light={{
+                                    <Select selectedValue={zone} onValueChange={handleZoneChange} fontSize={15} _light={{
                                         color: 'lightBlue.500',
                                         placeholderTextColor: 'black',
                                         bgColor: themeMode.current.bgHeaderColor

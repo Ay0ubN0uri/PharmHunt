@@ -1,8 +1,8 @@
-import { Box, Center, HStack, IconButton, Text, Button } from "native-base";
+import { Box, Center, HStack, IconButton, Text, Button, useToast } from "native-base";
 import { View } from 'react-native';
 
 import { RootContext } from "../store/context/root-context";
-import { useContext, useEffect, useLayoutEffect } from "react";
+import { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { Dimensions } from "react-native";
 import { ImageBackground } from "react-native";
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -11,35 +11,71 @@ import { AntDesign } from '@expo/vector-icons';
 import MapView, { Marker, Polyline, Callout } from "react-native-maps";
 import * as Linking from 'expo-linking';
 import { generateGoogleMapsURL } from '../utils/helper';
+import { FavoritesContext } from "../store/context/favorites-context";
+import CustomToast from "../components/core/CustomToast";
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenHeight = Math.round(Dimensions.get('window').height);
 
 const PharmacyDetails = ({ route, navigation }) => {
     const { themeMode } = useContext(RootContext);
-    const {id,name,address,garde,image,latitude,longitude,zone, distance, currentLocation} = route.params;
+    const toast = useToast();
+    const { id, name, address, garde, image, latitude, longitude, zone, distance, currentLocation } = route.params;
+    const favoritePharmaciesCtx = useContext(FavoritesContext);
+    const [isFavorite, setIsFavorite] = useState(favoritePharmaciesCtx.pharmacies.find(fav => fav.id == id));
+    // console.log(favoritePharmaciesCtx.pharmacies, id, favoritePharmaciesCtx.currentLocation)
 
-    const favoritePharmacyHandler = ()=>{
-        //
+    const favoritePharmacyHandler = () => {
+        if (isFavorite) {
+            favoritePharmaciesCtx.removeFavorite(id);
+            toast.show({
+                render: () => {
+                    return <CustomToast message="Pharmacy Removed!" />;
+                }
+            });
+            setIsFavorite(false)
+        }
+        else {
+            var p = {
+                id,
+                name,
+                address,
+                garde,
+                image,
+                latitude,
+                longitude,
+                zone,
+                distance,
+                currentLocation
+            }
+            console.log(p)
+            favoritePharmaciesCtx.addFavorite(p);
+            toast.show({
+                render: () => {
+                    return <CustomToast message="Pharmacy Added!" />;
+                }
+            });
+            setIsFavorite(true)
+        }
     }
 
     useLayoutEffect(() => {
         navigation.setOptions({
-            headerRight: ({ tintColor }) => <IconButton icon={<AntDesign name={true ? 'staro' : 'star'} size={24} color={tintColor} />}
+            headerRight: ({ tintColor }) => <IconButton icon={<AntDesign name={isFavorite ? 'star' : 'staro'} size={24} color={tintColor} />}
                 borderRadius="full"
                 _hover={{
                     bg: "lightBlue.200",
                 }} _pressed={{
                     bg: "lightBlue.200",
                 }}
-            onPress={favoritePharmacyHandler}
+                onPress={favoritePharmacyHandler}
             />
         })
-    }, [navigation]);
+    }, [navigation, favoritePharmacyHandler, isFavorite]);
 
 
     const handleOpenGoogleMaps = () => {
-        const url = generateGoogleMapsURL(currentLocation, {latitude, longitude});
+        const url = generateGoogleMapsURL(currentLocation, { latitude, longitude });
         console.log("url:", url);
         Linking.openURL(url);
     };
@@ -116,13 +152,13 @@ const PharmacyDetails = ({ route, navigation }) => {
                         pinColor="blue"
                     />
                     <Marker
-                        coordinate={{latitude, longitude}}
+                        coordinate={{ latitude, longitude }}
                         title={`${name} (${garde.toUpperCase()})`}
                         description={address}
                         pinColor="red"
-                        />
+                    />
                     <Polyline
-                        coordinates={[currentLocation, {latitude, longitude}]}
+                        coordinates={[currentLocation, { latitude, longitude }]}
                         strokeWidth={2}
                         strokeColor="green"
                     />
