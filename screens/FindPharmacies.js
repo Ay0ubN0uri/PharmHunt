@@ -6,7 +6,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
 import LoadingSpinner from "../components/core/LoadingSpinner";
 import ErrorOverlay from "../components/core/ErrorOverlay";
-
+import {Alert} from 'react-native';
 import * as Location from 'expo-location';
 import { FavoritesContext } from "../store/context/favorites-context";
 
@@ -24,19 +24,25 @@ const FindPharmacies = ({ navigation }) => {
     const [night, setNight] = useState(true);
     const [day, setDay] = useState(true);
     const [currentLocation, setCurrentLocation] = useState(null);
+    const [status, setStatus] = useState(null);
 
     const init = async () => {
+        const status = await requestLocationPermissions();
+        if (status !== 'granted') {
+            setError("Something Went Wrong");
+            Alert.alert('Permission denied', 'You need to grant location permission. Please go to your settings and grant location permission to our app to work properly');
+        }
         const location = await getLocation();
         if (!location) {
             setError("Something Went Wrong");
         }
         const cities = await fetchCities();
         if (!cities) {
-            setError("Something Want Wrong");
+            setError("Something Went Wrong");
         }
         const zones = await fetchZones();
         if (!zones) {
-            setError("Something Want Wrong");
+            setError("Something Went Wrong");
         }
 
         setCurrentLocation(location);
@@ -48,22 +54,22 @@ const FindPharmacies = ({ navigation }) => {
 
     useEffect(() => {
         init();
-    }, [])
+    }, [status])
+
+    const requestLocationPermissions = async () => {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        setStatus(status);
+        return status;
+    }
 
     const getLocation = async () => {
         try {
-            const { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                Alert.alert('Permission denied', 'You need to grant location permission to use this feature.');
-                return;
-            }
-            const location = await Location.getCurrentPositionAsync({});
-            console.log("location: ", location);
+            const location = await Location.getCurrentPositionAsync({timeout: 10000});
             const { latitude, longitude } = location.coords;
             return { latitude, longitude }
         }
         catch (error) {
-            console.error('Error while getting location:', error);
+            Alert.alert('Error while getting location:', error);
         }
     };
 
